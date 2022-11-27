@@ -4,6 +4,8 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { AfterimagePass } from "three/addons/postprocessing/AfterimagePass.js";
 
+
+let count = 0
 //VIEWPORT AND CAMERA SETTING
 let WIDTH = window.innerWidth,
 HEIGHT = window.innerHeight,
@@ -31,13 +33,14 @@ a, //updated accelleration of each point
 c, //updated color of each point
 // curs, //position of cursor
 direct = 1,  //updated direction of the point
-counter = 0; //updated counter
+counter = 0, //updated counter
+nOfPoints,
+scaleF=1;
 
 //EMOTION CONTROLLER: COLOR AND HB
 var params = {
 positivo: true, //true=blu - false=red
 battiti: 60,
-// theta2: -Math.PI/2
 };
 
 //SETUP |––––––––––––––––––––––––––––––––––––––––––
@@ -82,38 +85,57 @@ composer.addPass(afterimagePass);
 
 //generate points
 let distance = 50; //distance between points
-const nOfPoints = 3000;
-const points = [];
-const accelleration = [];
-for (let i = 0; i < nOfPoints; i++) {
-    let theta = THREE.Math.randFloatSpread(360); //random n 0-360
-    let phi = THREE.Math.randFloatSpread(360); //random n 0-360
-    points.push(
-    new THREE.Vector3(
-        distance * Math.sin(theta) * Math.cos(phi), //formule sfera
-        distance * Math.sin(theta) * Math.sin(phi),
-        distance * Math.cos(theta)
-    )
-    );
-    accelleration.push(
-    new THREE.Vector3(
-        THREE.Math.randFloatSpread(-20, 20), //vettore di accelerazione random -2 2
-        THREE.Math.randFloatSpread(-20, 20),
-        THREE.Math.randFloatSpread(-20, 20)
-    )
-    );
+const passoT = 5,
+passoP = 3;
+nOfPoints = 12960;
+
+positions = new Float32Array(nOfPoints);
+acc = new Float32Array(nOfPoints);
+
+
+let i = 0;
+
+for (let phi = 0; phi < 180; phi+= passoP) {
+for (let theta = 0; theta < 360; theta+= passoT) {
+        
+        acc[i]= THREE.Math.randFloatSpread(-20, 20); //vettore di accelerazione random -2 2
+        acc[i + 1]= THREE.Math.randFloatSpread(-20, 20);
+        acc[i + 2]= THREE.Math.randFloatSpread(-20, 20);
+
+        positions[i]= distance * (Math.cos(theta) * Math.sin(phi)) + (acc[i]/5); //formule sfera
+        positions[i + 1]= distance * (Math.sin(theta) * Math.sin(phi)) + (acc[i+1]/5);
+        positions[i + 2]= distance * (Math.cos(phi)) + (acc[i+2]/5);
+    
+        i+=3
+    }
 }
+
+// for (let i = 0; i < nOfPoints; i+=3) {
+//     acc[i]= THREE.Math.randFloatSpread(-20, 20); //vettore di accelerazione random -2 2
+//     acc[i + 1]= THREE.Math.randFloatSpread(-20, 20);
+//     acc[i + 2]= THREE.Math.randFloatSpread(-20, 20);
+
+//     const theta = THREE.Math.randFloatSpread(360);
+//     const phi = THREE.Math.randFloatSpread(180);
+//     positions[i]= distance * (Math.cos(theta) * Math.sin(phi)); //formule sfera
+//     positions[i + 1]= distance * (Math.sin(theta) * Math.sin(phi));
+//     positions[i + 2]= distance * (Math.cos(phi));
+    
+// }
 
 
 //geometry
-let geometryP = new THREE.BufferGeometry().setFromPoints(points); //crea vettore xyz per ogni punto
-let geometryA = new THREE.BufferGeometry().setFromPoints(accelleration); //crea vettore accel xyz per ogni punto
+let geometryP = new THREE.BufferGeometry(); //crea vettore xyz per ogni punto
+geometryP.setAttribute( 
+    'position', 
+    new THREE.BufferAttribute(
+        positions, 
+       3 ) );
 geometryP.setAttribute(
     "accelleration", //applica attributo accelerazione ai punti
     new THREE.BufferAttribute(
-    geometryA.attributes.position.array,
-    geometryA.attributes.position.array.length
-    )
+    acc,
+3    )
 );
 //mesh
 particles = new THREE.Points( //applica material alle geometryP
@@ -125,18 +147,18 @@ particles = new THREE.Points( //applica material alle geometryP
 );
 //Add particles to scene
 scene.add(particles);
+
+
 }
 
 // ITERATING FUNCTION |––––––––––––––––––––––––––––––––––––––––––
 function update() {
-//get positions, accelerations, color for each point
-positions = particles.geometry.attributes.position.array; //array [i]=x [i+1]=y [i+2]=z
-acc = particles.geometry.attributes.accelleration.array;  //array [i]=x [i+1]=y [i+2]=z
 c = particles.material.color; //vector .r .g .b
 //run actions
-pulse(positions, acc, c);
+pulse();
 rotation();
 color();
+scale()
 
 //update render
 particles.geometry.attributes.position.needsUpdate = true;
@@ -165,23 +187,25 @@ for (let i = 0; i < positions.length; i += 3) {
     acc[i + 1] * (params.battiti / 1800) * direct,
     acc[i + 2] * (params.battiti / 1800) * direct
     ); //apply
-    
-    if (params.positivo == true) {
-        positions[i] = a.x + v.x;
-        positions[i + 1] = a.y + v.y;
-        positions[i + 2] = a.z + v.z
-    } else  if (params.positivo == false) {
-        positions[i] = a.x + v.x;
-        positions[i + 1] = a.y + v.y;
-        positions[i + 2] = a.z + v.z
-    }
+    positions[i] = a.x + v.x;
+    positions[i + 1] = a.y + v.y;
+    positions[i + 2] = a.z + v.z
 }
 }
 
+let rotF
 function rotation() {
-particles.rotation.x += 0.005;
-particles.rotation.y += 0.005;
-particles.rotation.z += 0.005;
+
+if(params.positivo==true)
+    { particles.rotation.x += 0.005;
+        particles.rotation.y += 0.005;
+        particles.rotation.z += 0.005;
+    }
+    else if(params.positivo==false)
+   { particles.rotation.x += 0.01;
+    particles.rotation.y += 0.01;
+    particles.rotation.z += 0.01;
+    }
 }
 function color() { //shade to blu
 if (params.positivo == true) {
@@ -194,6 +218,20 @@ else if (params.positivo == false) {
     if (c.g > 0.3 && c.g <= 2) {c.g -= 0.01;} //0.4
     if (c.b > 0.5 && c.b <= 2) {c.b -= 0.01;} //0.5
 }
+}
+
+
+function scale(){
+  if(params.positivo==true) {if(scaleF<1)
+    { particles.scale.x = scaleF;
+     particles.scale.y = scaleF;
+     particles.scale.z = scaleF;
+     scaleF+=0.01}}
+    else if(params.positivo==false) {if(scaleF>0.5)
+   { particles.scale.x = scaleF;
+    particles.scale.y = scaleF;
+    particles.scale.z = scaleF;
+    scaleF-=0.01}}
 }
 
 // VIEWPORT FUNCTIONS |––––––––––––––––––––––––––––––––––––––––––

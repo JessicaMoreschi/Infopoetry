@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "three": "^0.140.2"
+    "three": "^0.140.2",
+    "three-noise": "^1.1.2"
   },
   "devDependencies": {
     "@types/dat.gui": "^0.7.7",
