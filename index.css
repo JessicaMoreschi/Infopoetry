@@ -1,0 +1,128 @@
+@font-face {
+    font-family: PPMori;
+    src: url("assets/font/PPMori-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: PPMori;
+    font-weight: bold;
+    src: url("assets/font/PPMori-SemiBold.otf") format("opentype");
+}
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'PPMori';
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    font-size: 30px;
+    line-height: 32px;
+    letter-spacing: 0.02em;
+    color: #FFFFFF;
+    overflow: hidden;
+}
+
+
+
+.main-container {
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    width: 100%;
+    height: 100vh;
+    justify-content: space-between;
+}
+
+.info-container {
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    padding: 40px;
+    width: 500px;
+    height: 100vh;
+    border-left: solid 2px #FFFFFF;
+
+}
+
+.canvas {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    width: 100%;
+    height: calc(100vh - 250px);
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    overflow: visible;
+}
+
+.header,
+.footer {
+    display: flex;
+    padding: 40px;
+    width: 100%;
+    height: 100px;
+    flex: none;
+    order: 0;
+    overflow: hidden;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.footer {
+    order: 2;
+    height: 150px;
+    align-items: flex-end;
+    align-content: flex-end;
+}
+
+button, #slider .rs-tooltip  {
+    background-color: #000000;
+    border: 2px solid #FFFFFF;
+    color: #FFFFFF;
+    padding: 2px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    height: 40px;
+    width: 140px;
+}
+
+button.inverted {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+
+}
+
+button#h {
+    width: 136px;
+    cursor:default
+}
+
+#slider{
+    position: absolute;
+    top: 100px;
+}
+
+#slider .rs-tooltip  {
+    top: calc(100vh - 180px);
+}

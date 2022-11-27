@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Bootstrap CSS -->
+    <!-- <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    /> -->
+
+    <title>First Three.js app</title>
+
+    <link rel="stylesheet" href="index.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./node_modules/three/build/three.module.js",
+          "three/addons/": "./node_modules/three/examples/jsm/"
+        }
+      }
+    </script>
+    <script src="index.js"></script>
+    <script src="roundSlider/demo/scripts/jquery-1.11.3.min.js"></script>
+    <link href="roundSlider/dist/roundslider.min.css" rel="stylesheet" />
+    <script src="roundSlider/dist/roundslider.min.js"></script>
+  </head>
+  <body>
+    
+    <div class="main-container" id="main-container">
+      <div class="header">
+        <p>dkjfhkh</p> 
+      </div>
+      <div class="canvas" id="canvas">
+
+        <div id="slider"></div>
+      </div>
+      <div class="footer">
+        <p>12.01.22</p>
+        <button class="inverted" onclick="openHelp()"><b>?</b></button>
+      </div>
+    </div>
+    <div class="info-container">
+      <p>Collletttivo designs and distributes free <u>Open-Source</u> typefaces. Follow our Instagram and subscribe to the newsletter to stay updated. Write us an email or read our diary to get confidential. You might want to donateto the cause eventually.</p>
+    </div>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+          $("#slider").roundSlider({
+              svgMode: true,
+              value: 0,
+              radius: 500,
+              circleShape: "half-top",
+              sliderType: "min-range",
+              showTooltip: true,
+              width: 1,
+              max: 24,
+              step: 1,
+              mouseScrollAction: false,
+              handleSize: "+30",
+              borderWidth:0
+          });
+      });
+     
+
+  </script>
+    
+    <script src="node_modules/dat.gui/build/dat.gui.js"></script>
+    <script type="module" src="canvas.js"></script>
+  </body>
+</html>
