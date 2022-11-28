@@ -37,6 +37,7 @@ counter = 0, //updated counter
 nOfPoints,
 scaleF=1;
 
+
 //EMOTION CONTROLLER: COLOR AND HB
 var params = {
 positivo: true, //true=blu - false=red
@@ -142,7 +143,7 @@ particles = new THREE.Points( //applica material alle geometryP
     geometryP,
     new THREE.PointsMaterial({
     color: 0xCCCCFF,
-    size: 1,
+    size: 1.5,
     })
 );
 //Add particles to scene
@@ -163,6 +164,10 @@ scale()
 //update render
 particles.geometry.attributes.position.needsUpdate = true;
 composer.render();
+if(slideValue==5){
+    params.positivo=false;
+    params.battiti=170
+} 
 requestAnimationFrame(update); //to iterate
 }
 
@@ -258,3 +263,36 @@ update();
 
 
 
+
+
+
+$(document).ready(function () {
+    $("#slider").roundSlider({
+        svgMode: true,
+        value: 1,
+        radius: 500,
+        circleShape: "half-top",
+        sliderType: "min-range",
+        showTooltip: true,
+        width: 1,
+        max: 12,
+        step: 1,
+        mouseScrollAction: false,
+        handleSize: "+30",
+        borderWidth:0,
+        change: function (args){
+            slideValue = args.value
+        },
+        tooltipFormat: function (args){
+            return args.value + ":00am"
+        }
+    });
+}
+
+); 
+
+
+
+
+
+  

@@ -120,9 +120,9 @@ button#h {
 
 #slider{
     position: absolute;
-    top: 100px;
+    top: 30px;
 }
 
 #slider .rs-tooltip  {
-    top: calc(100vh - 180px);
+    top: calc(100vh - 120px);
 }
