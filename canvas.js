@@ -125,6 +125,7 @@ for (let theta = 0; theta < 360; theta+= passoT) {
 // }
 
 
+
 //geometry
 let geometryP = new THREE.BufferGeometry(); //crea vettore xyz per ogni punto
 geometryP.setAttribute( 
@@ -148,6 +149,8 @@ particles = new THREE.Points( //applica material alle geometryP
 );
 //Add particles to scene
 scene.add(particles);
+console.log(particles)
+
 
 
 }
@@ -270,25 +273,24 @@ $(document).ready(function () {
     $("#slider").roundSlider({
         svgMode: true,
         value: 1,
-        radius: 500,
+        radius: 320,
         circleShape: "half-top",
         sliderType: "min-range",
         showTooltip: true,
         width: 1,
         max: 12,
         step: 1,
-        mouseScrollAction: false,
+        mouseScrollAction: true,
         handleSize: "+30",
         borderWidth:0,
         change: function (args){
             slideValue = args.value
         },
         tooltipFormat: function (args){
-            return args.value + ":00am"
+            return args.value + ":00 am"
         }
     });
 }
-
 ); 
 
 

@@ -26,19 +26,52 @@
     
     <div class="main-container" id="main-container">
       <div class="header">
-        <p>dkjfhkh</p> 
+        <h1>NaN–Not (just) a Number</h1> 
       </div>
       <div class="canvas" id="canvas">
 
         <div id="slider"></div>
       </div>
       <div class="footer">
+      <div class="subfooter">
         <p>12.01.22</p>
-        <button class="inverted" onclick="openHelp()"><b>?</b></button>
+        <button class="info" onclick="openHelp()"><b>?</b></button>
+      </div>
+      <div class="subfooter">
+        <script>
+          let leftValue=0
+          function text(msg,ctrlwidth) {
+          msg = "  ●  "+msg
+          newmsg = msg
+          while (newmsg.length < ctrlwidth) {
+          newmsg += msg
+          }
+          document.write ('<FORM NAME="Scrolltext">');
+          document.write ('<INPUT id="runningTxt" NAME="text" VALUE= "'+newmsg+'" SIZE= '+ctrlwidth+' disabled>');
+          document.write ('</FORM>');
+          rollmsg()
+          }
+          function rollmsg() {
+            leftValue+=5
+          document.getElementById('runningTxt').scrollTo({
+                top: 0,
+                left: leftValue,
+                behavior: 'smooth'
+            });
+          bannerID = setTimeout("rollmsg()",100)//change the number 100 to represent the speed of the scroll. The larger the number the slower it moves
+          }
+          
+          msg = "Studying at university"
+          ctrlwidth = innerWidth //change this number to the length you would like the message box to be
+          text(msg,ctrlwidth);
+       </script>
+          
       </div>
     </div>
+    </div>
+    </div>
     <div class="info-container">
-      <p>Lorem Ipsum is simply dummy text of the printing and <u>typesetting industry</u>. Lorem Ipsum has been the industry's standard dummy <u>text</u> ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</p>
+      <h1>Lorem Ipsum is simply dummy text of the printing and <u>typesetting industry</u>. Lorem Ipsum has been the industry's standard dummy <u>text</u> ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</h1>
     </div>
     
     <script src="node_modules/dat.gui/build/dat.gui.js"></script>
