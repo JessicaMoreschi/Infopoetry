@@ -7,7 +7,9 @@ function openHelp() {
 }
 
 // SCROLLING TEXT |––––––––––––––––––––––––––––––––––––––––––
+
 let leftValue = 0
+let updMsg = 'waking up'
 function text(msg, ctrlwidth) {
     msg = "  ●  " + msg
     newmsg = msg
@@ -17,18 +19,25 @@ function text(msg, ctrlwidth) {
     document.write('<FORM NAME="Scrolltext">');
     document.write('<INPUT id="runningTxt" NAME="text" VALUE= "' + newmsg + '" SIZE= ' + ctrlwidth + ' disabled>');
     document.write('</FORM>');
-    rollmsg()
+    rollmsg(updMsg)
 }
-function rollmsg() {
+function rollmsg(msg) {
+    updMsg=msg
     leftValue += 5
     document.getElementById('runningTxt').scrollTo({
         top: 0,
         left: leftValue,
         behavior: 'smooth'
     });
-    bannerID = setTimeout("rollmsg()", 100)
+        msg = "  ●  " + msg
+        newmsg = msg
+        while (newmsg.length < ctrlwidth) {
+            newmsg += msg
+        }
+        document.getElementById('runningTxt').attributes[2].value = newmsg
+        setTimeout("rollmsg(updMsg)", 100)
 }
 
-msg = "Studying at university"
+msg = 'waking up'
 ctrlwidth = innerWidth
 text(msg, ctrlwidth);

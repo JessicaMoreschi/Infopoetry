@@ -8,8 +8,7 @@ import { AfterimagePass } from "three/addons/postprocessing/AfterimagePass.js";
 let dataset = d3.csv("assets/dataset/dataset.csv");
 
 dataset.then(function (data){
-
-let d3id = 0;
+let d3id = 0; //slider position
 
 //VIEWPORT AND CAMERA SETTING
 let WIDTH = window.innerWidth,
@@ -166,9 +165,8 @@ scale()
 //update render
 particles.geometry.attributes.position.needsUpdate = true;
 composer.render();
-//////// HERE
 
-    params.positivo=data[d3id].Stress<20;
+    params.positivo=data[d3id].Stress<50;
     params.battiti=data[d3id].HR;
     params.context= data[d3id].Context;
     params.time= data[d3id].HOUR;
@@ -237,7 +235,7 @@ function scale(){
      particles.scale.y = scaleF;
      particles.scale.z = scaleF;
      scaleF+=0.01}}
-    else if(params.positivo==false) {if(scaleF>0.5)
+    else if(params.positivo==false) {if(scaleF>0.7)
    { particles.scale.x = scaleF;
     particles.scale.y = scaleF;
     particles.scale.z = scaleF;
@@ -283,7 +281,8 @@ $(document).ready(function () {
         handleSize: "+30",
         borderWidth:0,
         change: function (args){
-            d3id = args.value
+            d3id = args.value;
+            updMsg = params.context
         },
         tooltipFormat: function (args){
             return data[args.value].HOUR
@@ -291,9 +290,7 @@ $(document).ready(function () {
     });
 }
 ); 
-
 })
-
 
 
   
