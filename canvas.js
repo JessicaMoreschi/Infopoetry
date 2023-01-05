@@ -1,11 +1,11 @@
 import * as THREE from "three";
-// import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { AfterimagePass } from "three/addons/postprocessing/AfterimagePass.js";
 
+let slideValue = 0;
 
-let count = 0
 //VIEWPORT AND CAMERA SETTING
 let WIDTH = window.innerWidth,
 HEIGHT = window.innerHeight,
@@ -56,11 +56,11 @@ renderer.setSize(WIDTH, HEIGHT);
 container.appendChild(renderer.domElement);
 //scene
 scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x000000, 1, 10000);
+// scene.fog = new THREE.Fog(0x000000, 340, 400); //here to turn on the fog
 //camera
 camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 camera.setFocalLength( 50 );
-camera.position.set(0, 0, 500);
+camera.position.set(0, 0, 340);
 camera.lookAt(0, 0, 0);
 scene.add(camera);
 //gui
@@ -70,22 +70,22 @@ um.add(params, "positivo").name("positivo");
 const hr = gui.addFolder("hr");
 hr.add(params, "battiti", 40, 180).name("hrv");
 //orbit controls
-// const controls = new OrbitControls(camera, renderer.domElement);
-// controls.maxPolarAngle = Math.PI * 0.5;
-// controls.minDistance = 200;
-// controls.maxDistance = 500;
-// raycaster = new THREE.Raycaster();
-// mouse = new THREE.Vector2();
-// window.addEventListener("pointerdown", onPointerDown);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI * 0.5;
+controls.minDistance = 200;
+controls.maxDistance = 500;
+raycaster = new THREE.Raycaster();
+mouse = new THREE.Vector2();
+window.addEventListener("pointerdown", onPointerDown);
 // tail effect
 composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 afterimagePass = new AfterimagePass();
-afterimagePass.uniforms["damp"] = { value: 0.7 };
+afterimagePass.uniforms["damp"] = { value: 0.4 };
 composer.addPass(afterimagePass);
 
 //generate points
-let distance = 50; //distance between points
+let distance = 40; //distance between points
 const passoT = 5,
 passoP = 3;
 nOfPoints = 12960;
@@ -111,6 +111,7 @@ for (let theta = 0; theta < 360; theta+= passoT) {
     }
 }
 
+//random spread
 // for (let i = 0; i < nOfPoints; i+=3) {
 //     acc[i]= THREE.Math.randFloatSpread(-20, 20); //vettore di accelerazione random -2 2
 //     acc[i + 1]= THREE.Math.randFloatSpread(-20, 20);
@@ -143,16 +144,13 @@ geometryP.setAttribute(
 particles = new THREE.Points( //applica material alle geometryP
     geometryP,
     new THREE.PointsMaterial({
-    color: 0xCCCCFF,
-    size: 1.5,
+    color: 0xFFFFFF,
+    // color: 0xCCCCFF,
+    size: 1.2,
     })
 );
 //Add particles to scene
 scene.add(particles);
-console.log(particles)
-
-
-
 }
 
 // ITERATING FUNCTION |––––––––––––––––––––––––––––––––––––––––––
@@ -161,16 +159,16 @@ c = particles.material.color; //vector .r .g .b
 //run actions
 pulse();
 rotation();
-color();
-scale()
+// color();
+// scale()
 
 //update render
 particles.geometry.attributes.position.needsUpdate = true;
 composer.render();
-if(slideValue==5){
+//////// HERE
     params.positivo=false;
     params.battiti=170
-} 
+
 requestAnimationFrame(update); //to iterate
 }
 
@@ -243,13 +241,13 @@ function scale(){
 }
 
 // VIEWPORT FUNCTIONS |––––––––––––––––––––––––––––––––––––––––––
-//orbit function
-// function onPointerDown(event) {
-// event.preventDefault();
-// mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-// mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-// raycaster.setFromCamera(mouse, camera)
-// }
+// orbit function
+function onPointerDown(event) {
+// event.preventDefault(); removed becouse it prevents the slider toggle
+mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+raycaster.setFromCamera(mouse, camera)
+}
 
 //window resize
 window.onresize = function () {
@@ -265,15 +263,12 @@ init();
 update();
 
 
-
-
-
-
+// SLIDER |––––––––––––––––––––––––––––––––––––––––––
 $(document).ready(function () {
     $("#slider").roundSlider({
         svgMode: true,
         value: 1,
-        radius: 320,
+        radius: 340,
         circleShape: "half-top",
         sliderType: "min-range",
         showTooltip: true,
