@@ -4,7 +4,12 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { AfterimagePass } from "three/addons/postprocessing/AfterimagePass.js";
 
-let slideValue = 0;
+
+let dataset = d3.csv("assets/dataset/dataset.csv");
+
+dataset.then(function (data){
+
+let d3id = 0;
 
 //VIEWPORT AND CAMERA SETTING
 let WIDTH = window.innerWidth,
@@ -40,8 +45,10 @@ scaleF=1;
 
 //EMOTION CONTROLLER: COLOR AND HB
 var params = {
-positivo: true, //true=blu - false=red
-battiti: 60,
+positivo: data[d3id].Stress<20, //true=blu - false=red
+battiti: data[d3id].HR,
+context: data[d3id].Context,
+time:data[d3id].HOUR
 };
 
 //SETUP |––––––––––––––––––––––––––––––––––––––––––
@@ -63,12 +70,6 @@ camera.setFocalLength( 50 );
 camera.position.set(0, 0, 340);
 camera.lookAt(0, 0, 0);
 scene.add(camera);
-//gui
-const gui = new dat.GUI();
-const um = gui.addFolder("umore");
-um.add(params, "positivo").name("positivo");
-const hr = gui.addFolder("hr");
-hr.add(params, "battiti", 40, 180).name("hrv");
 //orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.maxPolarAngle = Math.PI * 0.5;
@@ -159,15 +160,18 @@ c = particles.material.color; //vector .r .g .b
 //run actions
 pulse();
 rotation();
-// color();
-// scale()
+color();
+scale()
 
 //update render
 particles.geometry.attributes.position.needsUpdate = true;
 composer.render();
 //////// HERE
-    params.positivo=false;
-    params.battiti=170
+
+    params.positivo=data[d3id].Stress<20;
+    params.battiti=data[d3id].HR;
+    params.context= data[d3id].Context;
+    params.time= data[d3id].HOUR;
 
 requestAnimationFrame(update); //to iterate
 }
@@ -267,28 +271,28 @@ update();
 $(document).ready(function () {
     $("#slider").roundSlider({
         svgMode: true,
-        value: 1,
+        value: 100,
         radius: 340,
         circleShape: "half-top",
         sliderType: "min-range",
         showTooltip: true,
         width: 1,
-        max: 12,
+        max: 599,
         step: 1,
         mouseScrollAction: true,
         handleSize: "+30",
         borderWidth:0,
         change: function (args){
-            slideValue = args.value
+            d3id = args.value
         },
         tooltipFormat: function (args){
-            return args.value + ":00 am"
+            return data[args.value].HOUR
         }
     });
 }
 ); 
 
-
+})
 
 
 
