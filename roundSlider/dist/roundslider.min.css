@@ -23,7 +23,7 @@
 }
 
 .rs-animation .rs-transition {
-    transition: all 0.5s linear 0s
+    transition: all 1s ease 0s
 }
 
 .rs-bar {

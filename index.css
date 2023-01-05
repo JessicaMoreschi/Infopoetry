@@ -10,11 +10,12 @@
     src: url("assets/font/PPMori-SemiBold.otf") format("opentype");
 }
 
-/* @font-face {
+@font-face {
     font-family: PPMori;
-    font-weight: italic;
+    font-weight: normal;
+    font-style: italic;
     src: url("assets/font/PPMori-RegularItalic.otf") format("opentype");
-} */
+} 
 
 * {
     margin: 0;
@@ -30,11 +31,11 @@ p {
 
 h1 {
     font-size: 24px;
-    /* line-height: 28px; */
     letter-spacing: 0.02em
 }
 
 body {
+    /* filter: invert(1); */
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -67,7 +68,7 @@ input {
     flex: none;
     order: 0;
     align-self: stretch;
-    width: 100%;
+    width:100%;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -94,18 +95,18 @@ input {
     align-items: center;
     padding: 0px;
     width: 100%;
-    height: calc(100% - 260px);
+    height: calc(100% - 156px);
     flex: none;
     order: 1;
     align-self: stretch;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .header,
 .footer,
 .subfooter {
     display: flex;
-    padding: 40px;
+    padding: 20px;
     width: 100%;
     height: auto;
     flex: none;
@@ -115,12 +116,13 @@ input {
     flex-wrap: nowrap;
     justify-content: space-between;
     align-items: flex-start;
+    z-index: 1;
 }
 
 .footer {
-    padding-bottom: 0;
     order: 1;
     gap: 12px;
+    padding: 0;
 
 }
 
@@ -153,7 +155,7 @@ button,
 }
 
 #slider .rs-tooltip {
-    top: calc(100vh - 150px);
+    top: calc(100vh - 130px);
     font-family: 'PPMori';
     height: 32px;
     font-weight: normal;
@@ -175,7 +177,7 @@ button,
 
 #slider {
     position: absolute;
-    top: 60px;
+    top: 40px;
 }
 
 button.info {
@@ -191,3 +193,7 @@ button#h {
     cursor: default
 }
 
+/* gui */
+.dg{
+    z-index: 1 !important;
+}
