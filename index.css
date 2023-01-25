@@ -17,6 +17,13 @@
     src: url("assets/font/PPMori-RegularItalic.otf") format("opentype");
 } 
 
+@font-face {
+    font-family: PPEditorial;
+    font-weight: normal;
+    font-style: italic;
+    src: url("assets/font/PPEditorialNew-Italic.otf") format("opentype");
+} 
+
 * {
     margin: 0;
     box-sizing: border-box;
@@ -30,8 +37,14 @@ p {
 }
 
 h1 {
-    font-size: 24px;
-    letter-spacing: 0.02em
+    font-size: 18pt;
+    letter-spacing: 0.02em;
+    line-height: 22pt
+}
+
+i {
+    font-family: 'PPEditorial';
+    font-style: italic;
 }
 
 body {
@@ -59,7 +72,7 @@ input {
     height: auto;
     text-transform: uppercase;
     padding: 10px 0;
-    font-size: 24px;
+    font-size: 18pt;
     bottom: 0;
 
 }
@@ -85,6 +98,7 @@ input {
     width: 500px;
     height: 100vh;
     border-left: solid 2px #FFFFFF;
+    overflow-y: scroll;
 
 }
 
@@ -123,7 +137,10 @@ input {
     order: 1;
     gap: 12px;
     padding: 0;
+}
 
+.header{
+    flex-direction: row;
 }
 
 .subfooter {

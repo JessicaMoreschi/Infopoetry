@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>First Three.js app</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <link rel="stylesheet" href="index.css" />
-    <script type="importmap">
+  <title>First Three.js app</title>
+
+  <link rel="stylesheet" href="index.css" />
+  <script type="importmap">
       {
         "imports": {
           "three": "./node_modules/three/build/three.module.js",
@@ -17,20 +18,21 @@
         }
       }
     </script>
-    <script src="roundSlider/demo/scripts/jquery-1.11.3.min.js"></script>
-    <link href="roundSlider/dist/roundslider.min.css" rel="stylesheet" />
-    <script src="roundSlider/dist/roundslider.min.js"></script>
-  </head>
-  <body>
-    
-    <div class="main-container" id="main-container" style="width: 100%;">
-      <div class="header">
-        <h1>NaN–Not <i>(just)</i> a Number</h1> 
-      </div>
-      <div class="canvas" id="canvas">
-        <div id="slider"></div>
-      </div>
-      <div class="footer">
+  <script src="roundSlider/demo/scripts/jquery-1.11.3.min.js"></script>
+  <link href="roundSlider/dist/roundslider.min.css" rel="stylesheet" />
+  <script src="roundSlider/dist/roundslider.min.js"></script>
+</head>
+
+<body>
+
+  <div class="main-container" id="main-container" style="width: 100%;">
+    <div class="header">
+      <h1>NaN–Not <i>(just)</i> a Number</h1>
+    </div>
+    <div class="canvas" id="canvas">
+      <div id="slider"></div>
+    </div>
+    <div class="footer">
       <div class="subfooter" style="padding: 0 10px;">
         <p>12.01.22</p>
         <button class="info" onclick="openHelp()"><b>?</b></button>
@@ -39,19 +41,36 @@
         <script src="index.js"></script>
       </div>
     </div>
-    </div>
-    </div>
-    <div class="info-container">
-      <h1>Lorem Ipsum is simply dummy text of the printing and <u>typesetting industry</u>. Lorem Ipsum has been the industry's standard dummy <u>text</u> ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</h1>
-    </div>
+  </div>
+  </div>
+  <div class="info-container">
+    <p>—Dataset</p> <br>
+    <h1>Emotional recognition using <u>heart rate data</u> from a <u>wearable smartwatch</u>.</h1>
+    <br><br>
+    <img src="assets/imgs/leg2.svg" alt="legenda"  style="width: fill-container">
+    <br><br>
+    <p>—Abstract</p><br>
+    <h1>Our data are never <i>just numbers</i>. They speak. Even the intangible, abstract and private can be brought to
+      light through algorithmic mediation.
+      The project aims therefore to raise awareness about the <u>pervasiveness of data collection</u>, which manage to
+      detect and interpret every aspect of our lives, including the most intimate sphere of <u>emotions</u>.</h1>
+    <br><br>
+    <p>—About the project</p><br>
+    <h1>"NaN-Not <i>(just)</i> a Number" is an open window on one of the <u>daily collected datasets</u> (in this case, the
+      biomedical measurements of a smartwatch) and its <u>algorithmic interpretation</u> (specifically, the stress
+      recognition).
+      The result is a <i>generative artwork</i> that, through a <u>data-driven approach</u>, provides a new exploratory experience
+      of the dataset, turning it into a human-understandable language.</h1>
+  </div>
 
-     <!-- ******************* Utilities ******************* -->
-    <!-- Javascript libraries -->
-    <!-- d3.js -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-     <!-- datagui.js -->
-    <script src="node_modules/dat.gui/build/dat.gui.js"></script>
-    <!-- myCanvas.js -->
-    <script type="module" src="canvas.js"></script>
-  </body>
+  <!-- ******************* Utilities ******************* -->
+  <!-- Javascript libraries -->
+  <!-- d3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <!-- datagui.js -->
+  <script src="node_modules/dat.gui/build/dat.gui.js"></script>
+  <!-- myCanvas.js -->
+  <script type="module" src="canvas.js"></script>
+</body>
+
 </html>

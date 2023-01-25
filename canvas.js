@@ -157,10 +157,11 @@ scene.add(particles);
 function update() {
 c = particles.material.color; //vector .r .g .b
 //run actions
-pulse();
-rotation();
-color();
-scale()
+
+// pulse();
+// rotation();
+// color();
+// scale()
 
 //update render
 particles.geometry.attributes.position.needsUpdate = true;
@@ -280,7 +281,7 @@ $(document).ready(function () {
         mouseScrollAction: true,
         handleSize: "+30",
         borderWidth:0,
-        change: function (args){
+        update: function (args){
             d3id = args.value;
             updMsg = params.context
         },
@@ -291,6 +292,3 @@ $(document).ready(function () {
 }
 ); 
 })
-
-
-  
