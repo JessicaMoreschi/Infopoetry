@@ -3,12 +3,12 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { AfterimagePass } from "three/addons/postprocessing/AfterimagePass.js";
-
+import { Perlin, FBM } from 'THREE_Noise';
 
 let dataset = d3.csv("assets/dataset/dataset.csv");
 
 dataset.then(function (data){
-let d3id = 0; //slider position
+let d3id = 421; //slider position
 
 //VIEWPORT AND CAMERA SETTING
 let WIDTH = window.innerWidth,
@@ -26,10 +26,12 @@ scene,
 composer, //tail effect
 afterimagePass, //tail effect
 raycaster, //OrbitControls
-mouse; //OrbitControls
+mouse //OrbitControls
 
 //SCENE VARIABLES
 let particles, //cloud of points
+perlin,
+pp,
 positions, //position of each point
 v, //updated position of each point
 acc,       //accelleration of each point
@@ -84,6 +86,9 @@ afterimagePass = new AfterimagePass();
 afterimagePass.uniforms["damp"] = { value: 0.4 };
 composer.addPass(afterimagePass);
 
+//perlin 
+perlin = new Perlin(Math.random())
+
 //generate points
 let distance = 40; //distance between points
 const passoT = 5,
@@ -94,11 +99,12 @@ positions = new Float32Array(nOfPoints);
 acc = new Float32Array(nOfPoints);
 
 
+//parametrical spread
 let i = 0;
 
 for (let phi = 0; phi < 180; phi+= passoP) {
 for (let theta = 0; theta < 360; theta+= passoT) {
-        
+    
         acc[i]= THREE.Math.randFloatSpread(-20, 20); //vettore di accelerazione random -2 2
         acc[i + 1]= THREE.Math.randFloatSpread(-20, 20);
         acc[i + 2]= THREE.Math.randFloatSpread(-20, 20);
@@ -144,8 +150,8 @@ geometryP.setAttribute(
 particles = new THREE.Points( //applica material alle geometryP
     geometryP,
     new THREE.PointsMaterial({
-    color: 0xFFFFFF,
-    // color: 0xCCCCFF,
+    // color: 0xFFFFFF,
+    color: 0xCCCCFF,
     size: 1.2,
     })
 );
@@ -158,10 +164,10 @@ function update() {
 c = particles.material.color; //vector .r .g .b
 //run actions
 
-// pulse();
-// rotation();
-// color();
-// scale()
+pulse();
+rotation();
+color();
+scale()
 
 //update render
 particles.geometry.attributes.position.needsUpdate = true;
@@ -185,13 +191,33 @@ if (counter * 2 < (60 / params.battiti) * 60) {
     counter = 0;
 }
 //update distance and velocity
+// for (let i = 0; i < positions.length; i += 3) {
+//     v = new THREE.Vector3( //posizione xyz
+//     positions[i],
+//     positions[i + 1],
+//     positions[i + 2]
+//     );
+//     a = new THREE.Vector3( //accelerazione xyz
+//     acc[i] * (params.battiti / 1800) * direct,
+//     acc[i + 1] * (params.battiti / 1800) * direct,
+//     acc[i + 2] * (params.battiti / 1800) * direct
+//     ); //apply
+//     positions[i] = a.x + v.x;
+//     positions[i + 1] = a.y + v.y;
+//     positions[i + 2] = a.z + v.z
+// }
+
+
+
+
+
 for (let i = 0; i < positions.length; i += 3) {
     v = new THREE.Vector3( //posizione xyz
     positions[i],
     positions[i + 1],
     positions[i + 2]
     );
-    a = new THREE.Vector3( //accelerazione xyz
+a = new THREE.Vector3( //accelerazione xyz
     acc[i] * (params.battiti / 1800) * direct,
     acc[i + 1] * (params.battiti / 1800) * direct,
     acc[i + 2] * (params.battiti / 1800) * direct
@@ -270,7 +296,7 @@ update();
 $(document).ready(function () {
     $("#slider").roundSlider({
         svgMode: true,
-        value: 100,
+        value: 421,
         radius: 340,
         circleShape: "half-top",
         sliderType: "min-range",

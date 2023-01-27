@@ -14,7 +14,7 @@ function openHelp() {
 // SCROLLING TEXT |––––––––––––––––––––––––––––––––––––––––––
 
 let leftValue = 0
-let updMsg = 'waking up'
+let updMsg = 'working on a project'
 function text(msg, ctrlwidth) {
     msg = "  ●  " + msg
     newmsg = msg
@@ -43,6 +43,6 @@ function rollmsg(msg) {
         setTimeout("rollmsg(updMsg)", 100)
 }
 
-msg = 'waking up'
+msg = 'working on a project'
 ctrlwidth = innerWidth
 text(msg, ctrlwidth);
