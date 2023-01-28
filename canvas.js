@@ -3,7 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { AfterimagePass } from "three/addons/postprocessing/AfterimagePass.js";
-import { Perlin, FBM } from 'THREE_Noise';
+// import { Perlin, FBM } from 'THREE_Noise';
 
 let dataset = d3.csv("assets/dataset/dataset.csv");
 
@@ -30,7 +30,7 @@ mouse //OrbitControls
 
 //SCENE VARIABLES
 let particles, //cloud of points
-perlin,
+// perlin,
 pp,
 positions, //position of each point
 v, //updated position of each point
@@ -87,7 +87,7 @@ afterimagePass.uniforms["damp"] = { value: 0.4 };
 composer.addPass(afterimagePass);
 
 //perlin 
-perlin = new Perlin(Math.random())
+// perlin = new Perlin(Math.random())
 
 //generate points
 let distance = 40; //distance between points
