@@ -8,7 +8,7 @@ import { Perlin, FBM } from 'THREE_Noise';
 let dataset = d3.csv("assets/dataset/dataset.csv");
 
 dataset.then(function (data) {
-    let d3id = 421; //slider position
+    let d3id = 0; //slider position
 
     //VIEWPORT AND CAMERA SETTING
     let WIDTH = window.innerWidth,
@@ -37,6 +37,8 @@ dataset.then(function (data) {
         l,
         c,
         scaleFactor = 1,
+        scaleFactorMax,
+        scaleFactorMin,
         direct = 1,  //updated direction of the point
         counter = 0 //updated counter
 
@@ -44,7 +46,7 @@ dataset.then(function (data) {
 
     //EMOTION CONTROLLER: COLOR AND HB
     var params = {
-        positivo: data[d3id].Stress < 20, //true=blu - false=red
+        positivo: data[d3id].Stress, //true=blu - false=red
         battiti: data[d3id].HR,
         context: data[d3id].Context,
         time: data[d3id].HOUR
@@ -66,14 +68,14 @@ dataset.then(function (data) {
         //camera
         camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
         camera.setFocalLength(50);
-        camera.position.set(0, 0, 150);
+        camera.position.set(0, 0, 140);
         camera.lookAt(0, 0, 0);
         scene.add(camera);
         //orbit controls
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.maxPolarAngle = Math.PI * 0.5;
-        controls.minDistance = 50;
-        controls.maxDistance = 250;
+        controls.minDistance = 40;
+        controls.maxDistance = 200;
         raycaster = new THREE.Raycaster();
         mouse = new THREE.Vector2();
         window.addEventListener("pointerdown", onPointerDown);
@@ -81,7 +83,7 @@ dataset.then(function (data) {
         composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
         afterimagePass = new AfterimagePass();
-        afterimagePass.uniforms["damp"] = { value: 0.4 };
+        afterimagePass.uniforms["damp"] = { value: 0.6 };
         composer.addPass(afterimagePass);
 
 
@@ -95,11 +97,21 @@ dataset.then(function (data) {
             sphere.geometry.attributes.position.clone()
         );
 
+        var texture = new THREE.TextureLoader().load(
+            "./assets/imgs/disc.png"
+        )
+
+
+
         particles = new THREE.Points( //applica material alle geometryP
             geometryP,
             new THREE.PointsMaterial({
+                // color: 0xCCCCFF,
                 color: 0xCCCCFF,
-                size: 0.2,
+                size: 0.5,
+                map: texture,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
             })
         );
         perlin = new Perlin(Math.random());
@@ -116,9 +128,9 @@ dataset.then(function (data) {
 
     // ITERATING FUNCTION |––––––––––––––––––––––––––––––––––––––––––
     function update(dt) {
-        particles.rotation.y += 0.001;
+        particles.rotation.y += 0.002;
         c = particles.material.color; //vector .r .g .b
-        color();
+
 
         //update render
         particles.geometry.attributes.position.needsUpdate = true;
@@ -132,6 +144,7 @@ dataset.then(function (data) {
 
         umor(dt);
         scale(dt)
+        color();
 
         requestAnimationFrame(update); //to iterate
     }
@@ -147,16 +160,16 @@ dataset.then(function (data) {
             const norm = new THREE.Vector3().fromBufferAttribute(snormal, i);
             const newPos = pos.clone();
 
-            if (params.positivo<30) {
+            if (params.positivo < 25) {
                 pos.multiplyScalar(1); //0 sferico; ++(0.1) frammentato
-            } else {pos.multiplyScalar( 0.1)}; //0 sferico; ++(0.1) frammentato
+            } else { pos.multiplyScalar(0.2) }; //0 sferico; ++(0.1) frammentato
             pos.x +=
                 dt * 0.0005 + // accelerazione della frammentazione
-                i / ((params.positivo, 0, 94, 1000, 300)); // 300 disordinato; 1000 ordinato
+                i / 300; // 300 disordinato; 1000 ordinato
 
-            const n = perlin.get3(pos) * THREE.Math.mapLinear(params.positivo, 0, 94, 0, 4);; //0 sferico; ++(4) distanza orbite frammentazione
-            newPos.add(norm.multiplyScalar(n * ((params.positivo, 0, 94, 0, 0.5)))); // q. di onde/oscillazioni: 0 sferico; 0.5 max
-            newPos.add(pos.multiplyScalar(n * ((params.positivo, 0, 94, 2, 5)))); //0 sferico; ++(5) frammentato
+            const n = perlin.get3(pos) * THREE.Math.mapLinear(params.positivo, -10, 94, 0, 3);; //0 sferico; ++(4) distanza orbite frammentazione
+            newPos.add(norm.multiplyScalar(n * ((params.positivo, -10, 94, 0, 0.5)))); // q. di onde/oscillazioni: 0 sferico; 0.5 max
+            newPos.add(pos.multiplyScalar(n * ((params.positivo, -10, 94, 2, 5)))); //0 sferico; ++(5) frammentato
 
             p.push(newPos);
         }
@@ -170,31 +183,30 @@ dataset.then(function (data) {
     const scale = function () {
 
         //set hr timing
-        if (counter * 2 < (120 / params.battiti) * 120) {
+        if (counter < ((120 / params.battiti) * 120) / 3) {
             counter++;
             scaleFactor += direct
         } else {
+            if (direct < 0) {
+                scaleFactorMax = scaleFactor
+                scaleFactorMin = scaleFactorMax - counter
+            }
+
             direct = -direct;
             counter = 0;
         }
 
-        particles.scale.setScalar((scaleFactor / 200 + 0.5));
+        particles.scale.setScalar(THREE.Math.mapLinear(scaleFactor, scaleFactorMin, scaleFactorMax, 0.5, 1))
 
     };
 
-    
+
 
     const color = function () { //shade to blu
-        if (params.positivo <= 50) {
-            if (c.r > 0.8 && c.r <= 2) { c.r -= 0.01; } //0.8
-            if (c.g > -1 && c.g < 0.8) { c.g += 0.01; } //0.8
-            if (c.b > -1 && c.b < 1) { c.b += 0.01; } //1
-        }  //shade to red
-        else if (params.positivo > 50) {
-            if (c.r > -1 && c.r < 1) { c.r += 0.01; } //1
-            if (c.g > 0.3 && c.g <= 2) { c.g -= 0.01; } //0.4
-            if (c.b > 0.5 && c.b <= 2) { c.b -= 0.01; } //0.5
-        }
+
+        c.r = THREE.Math.mapLinear(params.positivo, 10, 94, 0.6, 1)
+        c.g = THREE.Math.mapLinear(params.positivo, 10, 94, 0.7, 0);  //0.8
+        c.b = THREE.Math.mapLinear(params.positivo, 10, 94, 1, 0.15);
     }
 
 
@@ -225,7 +237,7 @@ dataset.then(function (data) {
     $(document).ready(function () {
         $("#slider").roundSlider({
             svgMode: true,
-            value: 421,
+            value: 0, //421
             radius: 340,
             circleShape: "half-top",
             sliderType: "min-range",
@@ -247,3 +259,6 @@ dataset.then(function (data) {
     }
     );
 })
+
+
+
