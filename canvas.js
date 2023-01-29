@@ -26,7 +26,8 @@ dataset.then(function (data) {
         composer, //tail effect
         afterimagePass, //tail effect
         raycaster, //OrbitControls
-        mouse //OrbitControls
+        mouse, //OrbitControls
+        stats
 
     //SCENE VARIABLES
     let particles, //cloud of points
@@ -87,7 +88,7 @@ dataset.then(function (data) {
         composer.addPass(afterimagePass);
 
 
-        const geometry = new THREE.SphereGeometry(10, 50, 50); //raggio, punti, punti
+        const geometry = new THREE.SphereGeometry(10, 75, 75); //raggio, punti, punti
         const material = new THREE.MeshBasicMaterial({ wireframe: false });
         sphere = new THREE.Mesh(geometry, material);
 
@@ -108,7 +109,7 @@ dataset.then(function (data) {
             new THREE.PointsMaterial({
                 // color: 0xCCCCFF,
                 color: 0xCCCCFF,
-                size: 0.5,
+                size: 0.8,
                 map: texture,
                 transparent: true,
                 blending: THREE.AdditiveBlending,
@@ -122,12 +123,16 @@ dataset.then(function (data) {
         l = sposition.count;
 
         particles.rotation.x = 0.1;
+
+   
+       
     }
 
 
 
     // ITERATING FUNCTION |––––––––––––––––––––––––––––––––––––––––––
     function update(dt) {
+      
         particles.rotation.y += 0.002;
         c = particles.material.color; //vector .r .g .b
 
@@ -183,7 +188,7 @@ dataset.then(function (data) {
     const scale = function () {
 
         //set hr timing
-        if (counter < ((120 / params.battiti) * 120) / 3) {
+        if (counter < ((120 / params.battiti) * 120) / 4) {
             counter++;
             scaleFactor += direct
         } else {
@@ -203,10 +208,9 @@ dataset.then(function (data) {
 
 
     const color = function () { //shade to blu
-
-        c.r = THREE.Math.mapLinear(params.positivo, 10, 94, 0.6, 1)
-        c.g = THREE.Math.mapLinear(params.positivo, 10, 94, 0.7, 0);  //0.8
-        c.b = THREE.Math.mapLinear(params.positivo, 10, 94, 1, 0.15);
+        c.r = THREE.Math.mapLinear(params.positivo, 10, 94, 0.2, 0.3)
+        c.g = THREE.Math.mapLinear(params.positivo, 10, 94, 0.3, 0.15);  //0.8
+        c.b = THREE.Math.mapLinear(params.positivo, 10, 94, 1, 0.15)
     }
 
 
@@ -214,6 +218,7 @@ dataset.then(function (data) {
     // orbit function
     function onPointerDown(event) {
         // event.preventDefault(); removed becouse it prevents the slider toggle
+        document.getElementsByClassName('tutorial')[0].style.display='none'
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, camera)
@@ -246,7 +251,7 @@ dataset.then(function (data) {
             max: 599,
             step: 1,
             mouseScrollAction: true,
-            handleSize: "+30",
+            handleSize: "+42",
             borderWidth: 0,
             update: function (args) {
                 d3id = args.value;
@@ -259,6 +264,7 @@ dataset.then(function (data) {
     }
     );
 })
+
 
 
 
