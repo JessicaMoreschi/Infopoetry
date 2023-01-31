@@ -229,7 +229,7 @@ let interval = 1 / 60; // 60 fps
         $("#slider").roundSlider({
             svgMode: true,
             value: 0, //421
-            radius: 340,
+            radius: HEIGHT/2,  
             circleShape: "half-top",
             sliderType: "min-range",
             showTooltip: true,
