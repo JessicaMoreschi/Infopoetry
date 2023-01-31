@@ -8,7 +8,7 @@ import { Perlin, FBM } from 'THREE_Noise';
 let dataset = d3.csv("assets/dataset/dataset.csv");
 
 dataset.then(function (data) {
-    let d3id = 421; //slider position
+    let d3id = 0; //slider position
 
     //VIEWPORT AND CAMERA SETTING
     let WIDTH = window.innerWidth,
@@ -28,23 +28,29 @@ dataset.then(function (data) {
         raycaster, //OrbitControls
         mouse //OrbitControls
 
+
+
+let clock = new THREE.Clock();
+let delta = 0;
+let interval = 1 / 60; // 60 fps
+
     //SCENE VARIABLES
-    let particles, //cloud of points
-        sphere,
-        perlin,
-        sposition,
-        snormal,
-        l,
-        c,
+    let particles, //cloud of points based on sphere vertex
+        sphere, //primary sphere
+        perlin, //perlin noise
+        sposition, //array of sphere vertex position
+        snormal,   //array of sphere vertex normals
+        l, //n. of vertex (particles)
+        c, //color
         scaleFactor = 1,
+        scaleFactorMax, //max pulse
+        scaleFactorMin, //min pulse
         direct = 1,  //updated direction of the point
-        counter = 0 //updated counter
-
-
+        counter = 0  //updated counter
 
     //EMOTION CONTROLLER: COLOR AND HB
     var params = {
-        positivo: data[d3id].Stress < 20, //true=blu - false=red
+        positivo: data[d3id].Stress,
         battiti: data[d3id].HR,
         context: data[d3id].Context,
         time: data[d3id].HOUR
@@ -62,18 +68,17 @@ dataset.then(function (data) {
         container.appendChild(renderer.domElement);
         //scene
         scene = new THREE.Scene();
-        // scene.fog = new THREE.Fog(0x000000, 340, 400); //here to turn on the fog
         //camera
         camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
         camera.setFocalLength(50);
-        camera.position.set(0, 0, 150);
+        camera.position.set(0, 0, 140);
         camera.lookAt(0, 0, 0);
         scene.add(camera);
         //orbit controls
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.maxPolarAngle = Math.PI * 0.5;
-        controls.minDistance = 50;
-        controls.maxDistance = 250;
+        controls.minDistance = 40;
+        controls.maxDistance = 200;
         raycaster = new THREE.Raycaster();
         mouse = new THREE.Vector2();
         window.addEventListener("pointerdown", onPointerDown);
@@ -81,34 +86,36 @@ dataset.then(function (data) {
         composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
         afterimagePass = new AfterimagePass();
-        afterimagePass.uniforms["damp"] = { value: 0.4 };
+        afterimagePass.uniforms["damp"] = { value: 0.6 };
         composer.addPass(afterimagePass);
 
-
-        const geometry = new THREE.SphereGeometry(10, 50, 50); //raggio, punti, punti
+        const geometry = new THREE.SphereGeometry(10, 75, 75); //raggio, punti, punti
         const material = new THREE.MeshBasicMaterial({ wireframe: false });
         sphere = new THREE.Mesh(geometry, material);
-
         let geometryP = new THREE.BufferGeometry(); //crea vettore xyz per ogni punto
         geometryP.setAttribute(
             "position",
-            sphere.geometry.attributes.position.clone()
+            sphere.geometry.attributes.position.clone() //copia posizione dei vertici della sfera
         );
-
+        var texture = new THREE.TextureLoader().load(
+            "./assets/imgs/disc.png"
+        )
         particles = new THREE.Points( //applica material alle geometryP
             geometryP,
             new THREE.PointsMaterial({
                 color: 0xCCCCFF,
-                size: 0.2,
+                size: 0.8,
+                map: texture,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
             })
         );
         perlin = new Perlin(Math.random());
-        scene.add(particles);
+        scene.add(particles); //no sphere! non serve
 
         sposition = sphere.geometry.attributes.position.clone();
         snormal = sphere.geometry.attributes.normal.clone();
         l = sposition.count;
-
         particles.rotation.x = 0.1;
     }
 
@@ -116,27 +123,32 @@ dataset.then(function (data) {
 
     // ITERATING FUNCTION |––––––––––––––––––––––––––––––––––––––––––
     function update(dt) {
-        particles.rotation.y += 0.001;
-        c = particles.material.color; //vector .r .g .b
-        color();
-
-        //update render
-        particles.geometry.attributes.position.needsUpdate = true;
-        composer.render();
-
-        params.positivo = data[d3id].Stress;
-        params.battiti = data[d3id].HR;
-        params.context = data[d3id].Context;
-        params.time = data[d3id].HOUR;
-
-
-        umor(dt);
-        scale(dt)
-
-        requestAnimationFrame(update); //to iterate
+        requestAnimationFrame(update); //to iterate a 60fps
+       
+        delta += clock.getDelta();
+        if (delta  > interval) {
+            particles.rotation.y += 0.002; //slight rotation
+            c = particles.material.color; //vector .r .g .b
+            //update render
+            particles.geometry.attributes.position.needsUpdate = true;
+            composer.render();
+            //listen to the slider and refer to dataset
+            params.positivo = data[d3id].Stress;
+            params.battiti = data[d3id].HR;
+            params.context = data[d3id].Context;
+            params.time = data[d3id].HOUR;
+            //functions to run
+            umor(dt);
+            pulse(dt)
+            color();     
+            delta = delta % interval;
+        }
     }
 
+  
+
     // MOVEMENTS FUNCTIONS |––––––––––––––––––––––––––––––––––––––––––
+    //shape of the sphere
     const umor = function (dt) {
         const position = sphere.geometry.attributes.position;
         const positionPart = particles.geometry.attributes.position;
@@ -147,54 +159,47 @@ dataset.then(function (data) {
             const norm = new THREE.Vector3().fromBufferAttribute(snormal, i);
             const newPos = pos.clone();
 
-            if (params.positivo<30) {
+            if (params.positivo < 25) {
                 pos.multiplyScalar(1); //0 sferico; ++(0.1) frammentato
-            } else {pos.multiplyScalar( 0.1)}; //0 sferico; ++(0.1) frammentato
+            } else { pos.multiplyScalar(0.2) }; //0 sferico; ++(0.1) frammentato
             pos.x +=
                 dt * 0.0005 + // accelerazione della frammentazione
-                i / ((params.positivo, 0, 94, 1000, 300)); // 300 disordinato; 1000 ordinato
-
-            const n = perlin.get3(pos) * THREE.Math.mapLinear(params.positivo, 0, 94, 0, 4);; //0 sferico; ++(4) distanza orbite frammentazione
-            newPos.add(norm.multiplyScalar(n * ((params.positivo, 0, 94, 0, 0.5)))); // q. di onde/oscillazioni: 0 sferico; 0.5 max
-            newPos.add(pos.multiplyScalar(n * ((params.positivo, 0, 94, 2, 5)))); //0 sferico; ++(5) frammentato
+                i / 300; // 300 disordinato; 1000 ordinato
+            const n = perlin.get3(pos) * THREE.Math.mapLinear(params.positivo, -10, 94, 0, 3);; //0 sferico; ++(4) distanza orbite frammentazione
+            newPos.add(norm.multiplyScalar(n * ((params.positivo, -10, 94, 0, 0.5)))); // q. di onde/oscillazioni: 0 sferico; 0.5 max
+            newPos.add(pos.multiplyScalar(n * ((params.positivo, -10, 94, 2, 5)))); //0 sferico; ++(5) frammentato
 
             p.push(newPos);
         }
-
+        //apply position
         position.copyVector3sArray(p);
         positionPart.copyVector3sArray(p);
     };
 
-
-
-    const scale = function () {
-
+    //pulse action
+    const pulse = function () {
         //set hr timing
-        if (counter * 2 < (120 / params.battiti) * 120) {
+        if (counter < ((120 / params.battiti) * 15)) {
             counter++;
-            scaleFactor += direct
+            scaleFactor += direct //dynamic scale value
         } else {
-            direct = -direct;
-            counter = 0;
+            if (direct < 0) {
+                scaleFactorMax = scaleFactor  //max scale value of that hr
+                scaleFactorMin = scaleFactorMax - counter  //min scale value of that hr
+            }
+            direct = -direct; //change direction
+            counter = 0;      //reset counter
         }
-
-        particles.scale.setScalar((scaleFactor / 200 + 0.5));
-
+        //apply scalar
+        particles.scale.setScalar(THREE.Math.mapLinear(scaleFactor, scaleFactorMin, scaleFactorMax, 0.5, 1)) //map the scale factor to a min and max range (otherwise the pulse could reach negative values)
     };
 
-    
-
-    const color = function () { //shade to blu
-        if (params.positivo <= 50) {
-            if (c.r > 0.8 && c.r <= 2) { c.r -= 0.01; } //0.8
-            if (c.g > -1 && c.g < 0.8) { c.g += 0.01; } //0.8
-            if (c.b > -1 && c.b < 1) { c.b += 0.01; } //1
-        }  //shade to red
-        else if (params.positivo > 50) {
-            if (c.r > -1 && c.r < 1) { c.r += 0.01; } //1
-            if (c.g > 0.3 && c.g <= 2) { c.g -= 0.01; } //0.4
-            if (c.b > 0.5 && c.b <= 2) { c.b -= 0.01; } //0.5
-        }
+    //change color
+    const color = function () {
+        //map the stress to a colour range from blu to red
+        c.r = THREE.Math.mapLinear(params.positivo, 10, 94, 0.55, 0.5) //r
+        c.g = THREE.Math.mapLinear(params.positivo, 10, 94, 0.65, 0.15); //g
+        c.b = THREE.Math.mapLinear(params.positivo, 10, 94, 1, 0.15) //b
     }
 
 
@@ -206,7 +211,6 @@ dataset.then(function (data) {
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, camera)
     }
-
     //window resize
     window.onresize = function () {
         WIDTH = window.innerWidth;
@@ -220,12 +224,11 @@ dataset.then(function (data) {
     init();
     update();
 
-
     // SLIDER |––––––––––––––––––––––––––––––––––––––––––
     $(document).ready(function () {
         $("#slider").roundSlider({
             svgMode: true,
-            value: 421,
+            value: 0, //421
             radius: 340,
             circleShape: "half-top",
             sliderType: "min-range",
@@ -234,7 +237,7 @@ dataset.then(function (data) {
             max: 599,
             step: 1,
             mouseScrollAction: true,
-            handleSize: "+30",
+            handleSize: "+42",
             borderWidth: 0,
             update: function (args) {
                 d3id = args.value;
@@ -242,8 +245,16 @@ dataset.then(function (data) {
             },
             tooltipFormat: function (args) {
                 return data[args.value].HOUR
+            },
+            start: function () {
+                document.getElementsByClassName('tutorial')[0].style.display = 'none'
             }
         });
     }
     );
 })
+
+
+
+
+

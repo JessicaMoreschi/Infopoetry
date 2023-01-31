@@ -185,11 +185,15 @@ button,
 }
 
 .rs-handle{
-    background-color: transparent !important;
+    background-color: black !important;
     background-repeat: no-repeat;
     background-position: center;
     background-image: url('assets/icons/star.svg');
     transform: rotate(30deg);
+    border: 1px solid white;
+}
+.rs-handle:hover{
+    box-shadow: 1px 1px 25px 5px rgba(255, 255, 255, 0.5)
 }
 
 #slider {
@@ -213,4 +217,13 @@ button#h {
 /* gui */
 .dg{
     z-index: 1 !important;
+}
+
+.tutorial{
+    height: 15%;
+    position: absolute;
+    left: calc(50% - 440px);
+    top: 50%;
+    transform: translateY(-62%);
+    opacity: 0.7;
 }
