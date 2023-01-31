@@ -222,7 +222,7 @@ button#h {
 .tutorial{
     height: 15%;
     position: absolute;
-    left: 19%;
+    left: calc(50% - 440px);
     top: 50%;
     transform: translateY(-62%);
     opacity: 0.7;

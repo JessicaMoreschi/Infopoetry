@@ -3,12 +3,13 @@ function openHelp() {
     let w = document.getElementById('main-container')
     if (w.style.width == '100%') {
         w.style.width = 'calc(100% - 500px)';
+        document.getElementsByClassName('tutorial')[0].style.left = 'calc(50% - 680px)'
         document.getElementsByClassName('info-container')[0].scrollTo({
             top: 0,
             left: 0,
             behavior: 'smooth'
         });
-    } else { w.style.width = '100%' }
+    } else { w.style.width = '100%'; document.getElementsByClassName('tutorial')[0].style.left = 'calc(50% - 440px)' }
 }
 
 // SCROLLING TEXT |––––––––––––––––––––––––––––––––––––––––––
