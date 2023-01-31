@@ -248,7 +248,7 @@ let interval = 1 / 60; // 60 fps
             },
             start: function (args) {
                 document.getElementsByClassName('tutorial')[0].style.display = 'none'
-                if(tutorial==true && args.value>100)
+                if(tutorial==true && args.value>580)
                 {   tutorial=false
                     document.getElementById('tutorial2').style.display = 'flex'}
             }
