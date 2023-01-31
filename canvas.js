@@ -26,8 +26,8 @@ dataset.then(function (data) {
         composer, //tail effect
         afterimagePass, //tail effect
         raycaster, //OrbitControls
-        mouse //OrbitControls
-
+        mouse, //OrbitControls
+        tutorial=true
 
 
 let clock = new THREE.Clock();
@@ -246,15 +246,15 @@ let interval = 1 / 60; // 60 fps
             tooltipFormat: function (args) {
                 return data[args.value].HOUR
             },
-            start: function () {
+            start: function (args) {
                 document.getElementsByClassName('tutorial')[0].style.display = 'none'
+                if(tutorial==true && args.value>100)
+                {   tutorial=false
+                    document.getElementById('tutorial2').style.display = 'flex'}
             }
         });
     }
     );
 })
-
-
-
 
 

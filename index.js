@@ -1,5 +1,7 @@
-// TOGGLE INFO PANEL |––––––––––––––––––––––––––––––––––––––––––
 document.getElementsByClassName('tutorial')[0].style.left = 'calc(50% - '+window.innerHeight/1.6+'px)'
+document.getElementById('canvas').addEventListener('wheel',function(){ document.getElementById('tutorial2').style.display='none'})
+
+// TOGGLE INFO PANEL |––––––––––––––––––––––––––––––––––––––––––
 
 function openHelp() {
     let w = document.getElementById('main-container')
