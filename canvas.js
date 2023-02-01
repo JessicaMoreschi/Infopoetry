@@ -202,7 +202,7 @@ dataset.then(function (data) {
     //pulse action
     const pulse = function () {
         //set hr timing
-        if (counter < ((120 / params.battiti) * 12)) {
+        if (counter < ((120 / params.battiti) * 10)) {
             counter++;
             scaleFactor += direct //dynamic scale value
         } else {
