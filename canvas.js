@@ -7,6 +7,9 @@ import { Perlin, FBM } from 'THREE_Noise';
 
 let dataset = d3.csv("assets/dataset/dataset.csv");
 
+setTimeout(() => { 
+  
+
 dataset.then(function (data) {
     let d3id = 0; //slider position
 
@@ -27,12 +30,13 @@ dataset.then(function (data) {
         afterimagePass, //tail effect
         raycaster, //OrbitControls
         mouse, //OrbitControls
-        tutorial=true
+        tutorial = true
 
 
-let clock = new THREE.Clock();
-let delta = 0;
-let interval = 1 / 60; // 60 fps
+    let clock = new THREE.Clock();
+    let delta = 0;
+    let interval = 1 / 60; // 60 fps
+    let onboarding = true
 
     //SCENE VARIABLES
     let particles, //cloud of points based on sphere vertex
@@ -71,7 +75,7 @@ let interval = 1 / 60; // 60 fps
         //camera
         camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
         camera.setFocalLength(50);
-        camera.position.set(0, 0, 140);
+        camera.position.set(0, 0, 30); //140
         camera.lookAt(0, 0, 0);
         scene.add(camera);
         //orbit controls
@@ -103,7 +107,7 @@ let interval = 1 / 60; // 60 fps
         particles = new THREE.Points( //applica material alle geometryP
             geometryP,
             new THREE.PointsMaterial({
-                color: 0xCCCCFF,
+                color: 0x000000,
                 size: 0.8,
                 map: texture,
                 transparent: true,
@@ -121,12 +125,14 @@ let interval = 1 / 60; // 60 fps
 
 
 
+
+
     // ITERATING FUNCTION |––––––––––––––––––––––––––––––––––––––––––
     function update(dt) {
         requestAnimationFrame(update); //to iterate a 60fps
-       
+
         delta += clock.getDelta();
-        if (delta  > interval) {
+        if (delta > interval) {
             particles.rotation.y += 0.002; //slight rotation
             c = particles.material.color; //vector .r .g .b
             //update render
@@ -137,15 +143,32 @@ let interval = 1 / 60; // 60 fps
             params.battiti = data[d3id].HR;
             params.context = data[d3id].Context;
             params.time = data[d3id].HOUR;
-            //functions to run
             umor(dt);
-            pulse(dt)
-            color();     
+            color();
+            if (onboarding == false) {
+                pulse()
+            }
+
+            //functions to run
             delta = delta % interval;
+        }
+
+        if (onboarding == true) {            
+
+            setTimeout(() => { 
+                camera.position.lerp(new THREE.Vector3(0, 0, 120), 0.05); 
+                document.getElementsByClassName('firstTitle')[0].style.opacity= 0
+                setTimeout(() => { 
+                    onboarding = false;
+                    document.getElementsByClassName('header')[0].style.opacity= 1
+                    document.getElementsByClassName('footer')[0].style.opacity= 1
+                    document.getElementsByClassName('tutorial')[0].style.opacity= 1
+                    document.getElementById('slider').style.opacity= 1
+                }, 500)
+            }, 3000);
         }
     }
 
-  
 
     // MOVEMENTS FUNCTIONS |––––––––––––––––––––––––––––––––––––––––––
     //shape of the sphere
@@ -179,7 +202,7 @@ let interval = 1 / 60; // 60 fps
     //pulse action
     const pulse = function () {
         //set hr timing
-        if (counter < ((120 / params.battiti) * 15)) {
+        if (counter < ((120 / params.battiti) * 10)) {
             counter++;
             scaleFactor += direct //dynamic scale value
         } else {
@@ -229,7 +252,7 @@ let interval = 1 / 60; // 60 fps
         $("#slider").roundSlider({
             svgMode: true,
             value: 0, //421
-            radius: HEIGHT/2,  
+            radius: HEIGHT / 2,
             circleShape: "half-top",
             sliderType: "min-range",
             showTooltip: true,
@@ -248,13 +271,16 @@ let interval = 1 / 60; // 60 fps
             },
             start: function (args) {
                 document.getElementsByClassName('tutorial')[0].style.display = 'none'
-                if(tutorial==true && args.value>580)
-                {   tutorial=false
-                    document.getElementById('tutorial2').style.display = 'flex'}
+                if (tutorial == true && args.value > 580) {
+                    tutorial = false
+                    document.getElementById('tutorial2').style.display = 'flex'
+                    document.getElementById('tutorial2').style.opacity = 1
+                }
             }
         });
     }
     );
 })
+}, 2000)
 
 

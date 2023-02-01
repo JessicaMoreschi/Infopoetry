@@ -599,3 +599,4 @@ ID,HOUR,TIME,TIMERAW,HR,Stress,Context
 597,17:57:00,"1,077",1037638680,89,20,Reaching the subway
 598,17:58:00,"1,078",1037638740,88,25,Reaching the subway
 599,18:00:00,"1,080",1037638860,90,19,Reaching the subway
+600,18:00:00,"1,080",1037638860,40,19,Reaching the subway
