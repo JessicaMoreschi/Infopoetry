@@ -145,6 +145,7 @@ input {
     flex-direction: row;
     transition: all 1000ms ease ;
     opacity: 0 ;
+    cursor: pointer;
 }
 
 .subfooter {
